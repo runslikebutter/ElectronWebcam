@@ -85,7 +85,7 @@ function successCallback(stream) {
 function playVideo() {
 
     videoIndex = videoIndex % videoSourceLength;
-    console.log('current video source :', selectedSourceId);
+    console.log(`current video source: ${selectedSourceId}`);
     const constraints = {
         audio: false,
         video: {
