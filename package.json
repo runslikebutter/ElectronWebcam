@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "./src/main.js",
   "scripts": {
-    "start": "electron13 .",
+    "start": "electron .",
     "buildx86": "electron-packager ./ ElectronWebcam --platform=linux --arch=x64 --dir=build/ --app-version=0.36.7",
     "buildarm64": "electron-packager --overwrite ./ ElectronWebcam --platform=linux --arch=arm64 --dir=build/ --app-version=0.36.7"
   },
