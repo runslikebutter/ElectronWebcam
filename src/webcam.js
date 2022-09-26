@@ -73,7 +73,7 @@ function webcamPrep() {
 }
 
 function errorCallback(err) {
-    console.log('Rejected', err);
+    console.log(`Rejected: ${err.message}`);
 }
 
 function successCallback(stream) {
