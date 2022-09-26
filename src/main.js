@@ -1,8 +1,9 @@
-var app = require('app');  // Module to control application life.
-var BrowserWindow = require('browser-window');  // Module to create native browser window.
+require('@electron/remote/main').initialize();
+
+const { BrowserWindow, app } = require('electron');  // Module to control application life.
 
 // Report crashes to our server.
-require('crash-reporter').start();
+//require('crash-reporter').start();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -27,12 +28,18 @@ app.on('ready', function() {
           height: 720,
           frame: false,
           resizable:false,
-          alwaysOnTop:false
+          alwaysOnTop:false,
+	      webPreferences: {
+		      nodeIntegration: true,
+		      contextIsolation: false,
+		      enableRemoteModule: true
+	      }
       }
   );
 
   // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index.html');
+  require("@electron/remote/main").enable(mainWindow.webContents);
+  mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // Open the DevTools.
   //mainWindow.openDevTools();

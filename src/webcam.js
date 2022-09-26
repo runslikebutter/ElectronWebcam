@@ -1,27 +1,28 @@
 'use strict';
 
-var remote = require('remote');
+var remote = require('@electron/remote');
 
 let videoSource = [];
 let videoIndex = 0;
 let videoSourceLength = 0;
+let selectedSourceId;
 
-window.onload=function(e){
+window.onload = function (e) {
     init();
     controls();
     webcamPrep();
 }
 
-function init(){
-    if (hasGetUserMedia()){
+function init() {
+    if (hasGetUserMedia()) {
         console.log('Ready to start!');
-    }else{
+    } else {
         alert('getUserMedia() is not supported in your browser');
     }
 
 }
 
-function controls(){
+function controls() {
     const close = document.querySelector('#closeButton');
     const theatre = document.querySelector('#theatreMode');
     const toggle = document.querySelector('#toggleVideoSource');
@@ -29,7 +30,7 @@ function controls(){
 
     toggle.addEventListener(
         'click',
-        function(e){
+        function (e) {
             videoIndex++;
             playVideo();
         }
@@ -37,19 +38,19 @@ function controls(){
 
     close.addEventListener(
         'click',
-        function(e){
+        function (e) {
             window.close();
         }
     );
 
     theatreMode.addEventListener(
         'click',
-        function(e){
+        function (e) {
             var window = remote.getCurrentWindow();
-            if (!window.isFullScreen()){
+            if (!window.isFullScreen()) {
                 window.setResizable(true);
                 window.setFullScreen(true);
-            }else{
+            } else {
                 window.setFullScreen(false);
                 window.setResizable(false);
             }
@@ -57,52 +58,47 @@ function controls(){
     );
 }
 
-function webcamPrep(){
-    MediaStreamTrack.getSources(
-        function(sourceInfos){
+function webcamPrep() {
+    navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
             var tempVideoIndex = 0;
 
-            for (let i = 0; i != sourceInfos.length; ++i){
-                //console.log(sourceInfos[i]);
-                if (sourceInfos[i].kind === 'video') {
-                    //console.log('video source found: ', sourceInfos);
-                    videoSource[tempVideoIndex] = sourceInfos[i];
-                    videoSourceLength++;
-                    tempVideoIndex++;
-
-                }
-            }
+            devices.forEach(device => {
+                if (device.kind === 'videoinput')
+                    selectedSourceId = device.deviceId;
+                console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+            });
             playVideo();
-        }
-    );
+        }).catch(err => console.error(`${err.name}: ${err.message}`));
 }
 
-function errorCallback(err){
+function errorCallback(err) {
     console.log('Rejected', err);
 }
 
-function successCallback(stream){
+function successCallback(stream) {
     const video = document.querySelector('#liveVideo');
-    video.src = window.URL.createObjectURL(stream);
+    video.srcObject = stream;
+    video.autoplay = true
 }
 
-function playVideo(){
+function playVideo() {
 
     videoIndex = videoIndex % videoSourceLength;
-    console.log('current video source :',videoSource[videoIndex]);
+    console.log('current video source :', videoSource[videoIndex]);
     const constraints = {
         audio: false,
         video: {
             mandatory: {
                 minWidth: 1280,
                 minHeight: 720,
-                sourceId:videoSource[videoIndex].id
+                sourceId: selectedSourceId
             }
         }
     }
 
 
-    navigator.webkitGetUserMedia(
+    navigator.getUserMedia(
         constraints,
         successCallback,
         errorCallback
@@ -112,6 +108,6 @@ function playVideo(){
 
 
 
-function hasGetUserMedia(){
+function hasGetUserMedia() {
     return !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
 }

@@ -2,6 +2,11 @@
   "name": "electron-webcam",
   "version": "0.0.1",
   "main": "./src/main.js",
+  "scripts": {
+    "start": "electron13 .",
+    "buildx86": "electron-packager ./ ElectronWebcam --platform=linux --arch=x64 --dir=build/ --app-version=0.36.7",
+    "buildarm64": "electron-packager --overwrite ./ ElectronWebcam --platform=linux --arch=arm64 --dir=build/ --app-version=0.36.7"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MaybeRex/Electron-Webcam.git"
@@ -11,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/MaybeRex/Electron-Webcam/issues"
   },
-  "homepage": "https://github.com/MaybeRex/Electron-Webcam#readme"
+  "homepage": "https://github.com/MaybeRex/Electron-Webcam#readme",
+  "devDependencies": {
+    "electron": "^20.2.0",
+    "electron-packager": "^16.0.0"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.0.8"
+  }
 }
